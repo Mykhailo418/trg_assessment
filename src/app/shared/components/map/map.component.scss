@@ -1,0 +1,8 @@
+agm-map {
+  height: 100%;
+  ::ng-deep {
+    .agm-map-container-inner {
+      border-radius: 4px;
+    }
+  }
+}

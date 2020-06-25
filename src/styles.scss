@@ -1,1 +1,5 @@
-@import 'bootstrap/scss/bootstrap-grid.scss';
+/* Importing Bootstrap SCSS file. */
+@import '~bootstrap/scss/bootstrap';
+
+// custom styles
+@import './app/styles/app';

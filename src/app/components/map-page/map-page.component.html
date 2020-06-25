@@ -1,0 +1,11 @@
+<div class="map-page-wrapper row">
+    <div *ngIf="selectedMarker" class="col-sm market-info-wrapper">
+        <app-marker-info [marker]="selectedMarker"></app-marker-info>
+    </div>
+    <div class="col-sm map-wrapper" [ngClass]="{'selected-marker': selectedMarker}">
+      <app-map
+        [markers]="locations$ | async"
+        (onMarkerClick)="onMarkerClick($event)"
+        (onInfoClose)="onInfoMarkerClose()"></app-map>
+    </div>
+</div>

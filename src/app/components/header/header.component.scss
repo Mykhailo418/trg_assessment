@@ -1,0 +1,29 @@
+@import '../../styles/variables';
+
+header {
+  background: $header-bg;
+  .navbar {
+    height: 40px;
+    .navbar-nav {
+      .nav-item {
+        .nav-link {
+          padding: 0 0.5rem;
+          line-height: 1;
+          color: $nav-link;
+          transition: all 0.3s ease;
+          &:hover {
+            color: $nav-link-hover;
+          }
+        }
+        &.active {
+          .nav-link {
+            color: white;
+            &:hover {
+              cursor: default;
+            }
+          }
+        }
+      }
+    }
+  }
+}
