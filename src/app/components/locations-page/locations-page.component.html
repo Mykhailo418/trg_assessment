@@ -1,1 +1,37 @@
-<p>locations-page works!</p>
+<div class="btn-wrapper">
+  <button class="create-location-btn">
+    <i class="fas fa-plus"></i> Create
+  </button>
+</div>
+<div class="table-wrapper" #tableWrapper (window:resize)="onResize($event)">
+  <table class="table">
+    <thead>
+      <tr>
+        <th>name</th>
+        <th>lat</th>
+        <th>lon</th>
+        <th>action</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let location of locationsToShow$ | async">
+        <td class="td-name" [title]="location.name">{{location.name}}</td>
+        <td>{{location.lat}}</td>
+        <td>{{location.lng}}</td>
+        <td>
+          <button class="edit-btn"><i class="fas fa-pen"></i></button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+  <div class="pagination-wrapper">
+    <ngb-pagination *ngIf="(locations$ | async).length > locationsPerPage"
+      class="d-flex justify-content-end"
+      [collectionSize]="(locations$ | async).length"
+      [(page)]="currentPage"
+      [pageSize]="locationsPerPage"
+      [maxSize]="5"
+      size="sm"
+      (pageChange)="onCurrentPageChange()"></ngb-pagination>
+  </div>
+<div>

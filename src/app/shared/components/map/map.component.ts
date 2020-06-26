@@ -27,7 +27,6 @@ export class MapComponent implements OnInit, OnChanges {
   constructor() { }
 
   ngOnChanges(changes: SimpleChanges): void {
-    console.log(changes);
     if (changes.hasOwnProperty('markers') && this.markers.length) {
       this.lat = this.markers[0].lat;
       this.lng = this.markers[0].lng;
@@ -38,13 +37,11 @@ export class MapComponent implements OnInit, OnChanges {
   }
 
   onMapClick(event: MouseEvent): void {
-    console.log(event);
     this.closeInfo();
     this.onMapClickEvent.emit(event);
   }
 
   onMarkerClick(agmMarker: AgmMarker, marker: Marker): void {
-    console.log(agmMarker);
     this.selectedMarker = marker;
     this.selectedInfoWindow = agmMarker.infoWindow.first;
     this.onMarkerClickEvent.emit(marker);

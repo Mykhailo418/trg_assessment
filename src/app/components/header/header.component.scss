@@ -3,7 +3,7 @@
 header {
   background: $header-bg;
   .navbar {
-    height: 40px;
+    height: $header-height;
     .navbar-nav {
       .nav-item {
         .nav-link {
