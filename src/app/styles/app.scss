@@ -3,3 +3,7 @@
 body {
   background: $bg;
 }
+
+.clickable:hover {
+  cursor: pointer;
+}

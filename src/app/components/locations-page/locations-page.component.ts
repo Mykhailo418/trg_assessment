@@ -1,9 +1,11 @@
 import { Component, OnInit, ViewChild, ElementRef, AfterViewInit, AfterViewChecked, AfterContentInit } from '@angular/core';
 import { Observable, combineLatest, Subject, BehaviorSubject } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { map, tap } from 'rxjs/operators';
 
 import { LocationsStorageService } from '../../services/locations-storage.service';
 import { Marker } from '../../models/marker';
+import { ORDER } from '../../constants/order';
+import { Sorting } from '../../models/sorting';
 
 @Component({
   selector: 'app-locations-page',
@@ -15,8 +17,12 @@ export class LocationsPageComponent implements OnInit, AfterViewInit {
 
   locations$: Observable<Marker[]>;
   locationsToShow$: Observable<Marker[]>;
-  locationsPerPageChanged = new Subject<number>()
-  currentPageChanged = new BehaviorSubject<number>(1)
+  locationsPerPageChanged = new Subject<number>();
+  currentPageChanged = new BehaviorSubject<number>(1);
+  sortingChanged = new BehaviorSubject<Sorting>({
+    sortBy: '',
+    orderBy: ORDER.ASC
+  });
 
   tableWrapperHeight: number;
   locationsPerPage: number;
@@ -25,12 +31,38 @@ export class LocationsPageComponent implements OnInit, AfterViewInit {
   paginationHeight: number;
   currentPage = 1;
   borderSpacingn = 8;
-  tableMarginTop = 7
+  tableMarginTop = 7;
+
+  sorting: Sorting = {
+    sortBy: '',
+    orderBy: ORDER.ASC
+  };
 
   constructor(private locationsStorageService: LocationsStorageService) { }
 
   ngOnInit(): void {
-    this.locations$ = this.locationsStorageService.observeLocations();
+    const sorting$ = this.sortingChanged.asObservable()
+      .pipe(
+        tap((sorting: Sorting) => this.sorting = sorting)
+      );
+    this.locations$ = combineLatest(
+      this.locationsStorageService.observeLocations(),
+      sorting$
+    ).pipe(
+      map(([locations, sorting]: [Marker[], Sorting]) => {
+        if (sorting.sortBy) {
+          // TODO: send copy from storage
+          locations.sort((location1, location2) => {
+            if (location1[sorting.sortBy] > location2[sorting.sortBy]) {
+              return sorting.orderBy === ORDER.DESC ? -1 : 1;
+            } else {
+              return sorting.orderBy === ORDER.DESC ? 1 : -1;
+            }
+          });
+        }
+        return locations;
+      })
+    );
     this.locationsToShow$ = combineLatest(
       this.locations$,
       this.locationsPerPageChanged,
@@ -69,6 +101,14 @@ export class LocationsPageComponent implements OnInit, AfterViewInit {
     this.locationsPerPage = this.calculateLocationsPerPage();
     this.locationsPerPageChanged.next(this.locationsPerPage);
     this.currentPageChanged.next(this.currentPage);
+  }
+
+  sortColumns(sortBy: string): void {
+    const sorting = {
+      sortBy,
+      orderBy: this.sorting.orderBy === ORDER.DESC && this.sorting.sortBy === sortBy ? ORDER.ASC : ORDER.DESC
+    }
+    this.sortingChanged.next(sorting);
   }
 
   private calculateLocationsPerPage(): number {

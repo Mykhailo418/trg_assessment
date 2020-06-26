@@ -7,9 +7,27 @@
   <table class="table">
     <thead>
       <tr>
-        <th>name</th>
-        <th>lat</th>
-        <th>lon</th>
+        <th class="clickable" (click)="sortColumns('name')">
+          name
+          <span class="sorting-icons" *ngIf="sorting.sortBy === 'name'">
+            <i class="fas fa-sort-up" [class.show]="sorting.orderBy === 'ASC'"></i>
+            <i class="fas fa-sort-down" [class.show]="sorting.orderBy === 'DESC'"></i>
+          </span>
+        </th>
+        <th class="clickable" (click)="sortColumns('lat')">
+          lat
+          <span class="sorting-icons" *ngIf="sorting.sortBy === 'lat'">
+            <i class="fas fa-sort-up" [class.show]="sorting.orderBy === 'ASC'"></i>
+            <i class="fas fa-sort-down" [class.show]="sorting.orderBy === 'DESC'"></i>
+          </span>
+        </th>
+        <th class="clickable" (click)="sortColumns('lng')">
+          lon
+          <span class="sorting-icons" *ngIf="sorting.sortBy === 'lng'">
+            <i class="fas fa-sort-up" [class.show]="sorting.orderBy === 'ASC'"></i>
+            <i class="fas fa-sort-down" [class.show]="sorting.orderBy === 'DESC'"></i>
+          </span>
+        </th>
         <th>action</th>
       </tr>
     </thead>

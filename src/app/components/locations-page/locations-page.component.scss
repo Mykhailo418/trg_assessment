@@ -62,9 +62,24 @@
       tr {
         background: $table-head-bg;
         th {
+          position: relative;
           text-transform: uppercase;
           color: white;
           font-weight: 600;
+
+          .sorting-icons {
+            position: absolute;
+            right: 0;
+            top: 12px;
+            .fas {
+              display: block;
+              height: 7px;
+              visibility: hidden;
+              &.show {
+                visibility: visible;
+              }
+            }
+          }
         }
       }
     }
