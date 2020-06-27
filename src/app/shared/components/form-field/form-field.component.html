@@ -1,0 +1,12 @@
+<form class="form" [formGroup]="form">
+  <div class="form-group">
+      <input type="text"
+        class="form-control"
+        [name]="fieldName"
+        [formControlName]="fieldName"
+      />
+      <span class="errors" *ngIf="!form.get(fieldName).valid && form.get(fieldName).touched">
+        <span *ngFor="let error of showErrors()">{{error}}</span>
+      </span>
+  </div>
+</form>

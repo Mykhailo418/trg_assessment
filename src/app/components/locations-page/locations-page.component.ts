@@ -1,6 +1,7 @@
 import { Component, OnInit, ViewChild, ElementRef, AfterViewInit, AfterViewChecked, AfterContentInit } from '@angular/core';
 import { Observable, combineLatest, Subject, BehaviorSubject } from 'rxjs';
 import { map, tap } from 'rxjs/operators';
+import { FormGroup, FormControl, Validators } from '@angular/forms';
 
 import { LocationsStorageService } from '../../services/locations-storage.service';
 import { Marker } from '../../models/marker';
@@ -16,6 +17,7 @@ export class LocationsPageComponent implements OnInit, AfterViewInit {
   @ViewChild('tableWrapper') tableWrapperEl: ElementRef;
 
   locations$: Observable<Marker[]>;
+  sortedLocations$: Observable<Marker[]>;
   locationsToShow$: Observable<Marker[]>;
   locationsPerPageChanged = new Subject<number>();
   currentPageChanged = new BehaviorSubject<number>(1);
@@ -38,20 +40,33 @@ export class LocationsPageComponent implements OnInit, AfterViewInit {
     orderBy: ORDER.ASC
   };
 
+  editMode = false;
+  forms = {};
+
+  private latLngPattern = /^\d{2}\.\d{5}$/;
+
   constructor(private locationsStorageService: LocationsStorageService) { }
 
   ngOnInit(): void {
+    this.locations$ = this.locationsStorageService.observeLocations()
+      .pipe(
+        // make copy of locations to prevent mutation
+        map((locations: Marker[]) => locations.map((location: Marker) => {
+          return  {...location};
+        } ))
+      );
+
     const sorting$ = this.sortingChanged.asObservable()
       .pipe(
         tap((sorting: Sorting) => this.sorting = sorting)
       );
-    this.locations$ = combineLatest(
-      this.locationsStorageService.observeLocations(),
+
+    this.sortedLocations$ = combineLatest(
+      this.locations$,
       sorting$
     ).pipe(
       map(([locations, sorting]: [Marker[], Sorting]) => {
         if (sorting.sortBy) {
-          // TODO: send copy from storage
           locations.sort((location1, location2) => {
             if (location1[sorting.sortBy] > location2[sorting.sortBy]) {
               return sorting.orderBy === ORDER.DESC ? -1 : 1;
@@ -63,8 +78,9 @@ export class LocationsPageComponent implements OnInit, AfterViewInit {
         return locations;
       })
     );
+
     this.locationsToShow$ = combineLatest(
-      this.locations$,
+      this.sortedLocations$,
       this.locationsPerPageChanged,
       this.currentPageChanged
     ).pipe(
@@ -89,6 +105,8 @@ export class LocationsPageComponent implements OnInit, AfterViewInit {
   onResize(event: Event): void {
     if (this.tableWrapperHeight !== this.tableWrapperEl.nativeElement.offsetHeight) {
       this.changeLocationsPerPage();
+      this.editMode = false;
+      this.forms = {};
     }
   }
 
@@ -109,6 +127,36 @@ export class LocationsPageComponent implements OnInit, AfterViewInit {
       orderBy: this.sorting.orderBy === ORDER.DESC && this.sorting.sortBy === sortBy ? ORDER.ASC : ORDER.DESC
     }
     this.sortingChanged.next(sorting);
+  }
+
+  editLocation(location: Marker, rowIndex: number): void {
+    this.editMode = true;
+    this.forms[rowIndex] = this.createForm(location);
+  }
+
+  cancelEditing(rowIndex: number): void {
+    delete this.forms[rowIndex];
+    this.editMode = !!Object.keys(this.forms).length;
+    console.log(this.editMode, Object.keys(this.forms).length, this.forms);
+  }
+
+  saveEditing(rowIndex: number, location: Marker): void {
+    if (this.forms[rowIndex].invalid) return;
+    this.locationsStorageService.updateLocation({
+      id: location.id,
+      ...this.forms[rowIndex].value
+    });
+    delete this.forms[rowIndex];
+    this.editMode = !!Object.keys(this.forms).length;
+    console.log(this.forms);
+  }
+
+  private createForm(location: Marker): FormGroup {
+    return new FormGroup({
+      name: new FormControl(location.name, [Validators.required]),
+      lat: new FormControl(location.lat, [Validators.required, Validators.pattern(this.latLngPattern)]),
+      lng: new FormControl(location.lng, [Validators.required, Validators.pattern(this.latLngPattern)])
+    });
   }
 
   private calculateLocationsPerPage(): number {

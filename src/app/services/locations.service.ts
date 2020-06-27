@@ -25,7 +25,8 @@ export class LocationsService {
   }
 
   private convertLocationsToMarkers(locations: Location[]): Marker[] {
-    return locations.map((location: Location) => ({
+    return locations.map((location: Location, index: number) => ({
+      id: index,
       lat: location.coordinates[0],
       lng: location.coordinates[1],
       name: location.name

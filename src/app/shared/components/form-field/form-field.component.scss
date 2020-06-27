@@ -1,0 +1,17 @@
+.form {
+  .form-group {
+    margin: 0;
+    .form-control {
+      font-size: 1em;
+      height: 30px;
+      &.ng-invalid {
+        border-color: red;
+      }
+    }
+    .errors {
+      display: block;
+      text-align: left;
+      color: red;
+    }
+  }
+}

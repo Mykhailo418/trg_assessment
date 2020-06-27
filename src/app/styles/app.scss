@@ -7,3 +7,8 @@ body {
 .clickable:hover {
   cursor: pointer;
 }
+
+.wrapper-with-scroll {
+  max-height: 100%;
+  overflow-y: auto;
+}

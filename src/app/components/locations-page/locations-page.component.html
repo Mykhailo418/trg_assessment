@@ -4,44 +4,71 @@
   </button>
 </div>
 <div class="table-wrapper" #tableWrapper (window:resize)="onResize($event)">
-  <table class="table">
-    <thead>
-      <tr>
-        <th class="clickable" (click)="sortColumns('name')">
-          name
-          <span class="sorting-icons" *ngIf="sorting.sortBy === 'name'">
-            <i class="fas fa-sort-up" [class.show]="sorting.orderBy === 'ASC'"></i>
-            <i class="fas fa-sort-down" [class.show]="sorting.orderBy === 'DESC'"></i>
-          </span>
-        </th>
-        <th class="clickable" (click)="sortColumns('lat')">
-          lat
-          <span class="sorting-icons" *ngIf="sorting.sortBy === 'lat'">
-            <i class="fas fa-sort-up" [class.show]="sorting.orderBy === 'ASC'"></i>
-            <i class="fas fa-sort-down" [class.show]="sorting.orderBy === 'DESC'"></i>
-          </span>
-        </th>
-        <th class="clickable" (click)="sortColumns('lng')">
-          lon
-          <span class="sorting-icons" *ngIf="sorting.sortBy === 'lng'">
-            <i class="fas fa-sort-up" [class.show]="sorting.orderBy === 'ASC'"></i>
-            <i class="fas fa-sort-down" [class.show]="sorting.orderBy === 'DESC'"></i>
-          </span>
-        </th>
-        <th>action</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let location of locationsToShow$ | async">
-        <td class="td-name" [title]="location.name">{{location.name}}</td>
-        <td>{{location.lat}}</td>
-        <td>{{location.lng}}</td>
-        <td>
-          <button class="edit-btn"><i class="fas fa-pen"></i></button>
-        </td>
-      </tr>
-    </tbody>
-  </table>
+  <div [ngClass]="{'wrapper-with-scroll': editMode}">
+    <table class="table">
+      <thead [ngClass]="{'disabled-sorting': editMode}">
+        <tr>
+          <th class="clickable" (click)="sortColumns('name')">
+            name
+            <span class="sorting-icons" *ngIf="sorting.sortBy === 'name'">
+              <i class="fas fa-sort-up" [class.show]="sorting.orderBy === 'ASC'"></i>
+              <i class="fas fa-sort-down" [class.show]="sorting.orderBy === 'DESC'"></i>
+            </span>
+          </th>
+          <th class="clickable" (click)="sortColumns('lat')">
+            lat
+            <span class="sorting-icons" *ngIf="sorting.sortBy === 'lat'">
+              <i class="fas fa-sort-up" [class.show]="sorting.orderBy === 'ASC'"></i>
+              <i class="fas fa-sort-down" [class.show]="sorting.orderBy === 'DESC'"></i>
+            </span>
+          </th>
+          <th class="clickable" (click)="sortColumns('lng')">
+            lon
+            <span class="sorting-icons" *ngIf="sorting.sortBy === 'lng'">
+              <i class="fas fa-sort-up" [class.show]="sorting.orderBy === 'ASC'"></i>
+              <i class="fas fa-sort-down" [class.show]="sorting.orderBy === 'DESC'"></i>
+            </span>
+          </th>
+          <th>action</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let location of locationsToShow$ | async; index as i">
+          <td class="td-name" [title]="location.name">
+            <span *ngIf="!forms[i]; else nameField">{{location.name}}</span>
+            <ng-template #nameField>
+              <app-form-field [form]="forms[i]" fieldName="name"></app-form-field>
+            </ng-template>
+          </td>
+          <td>
+            <span *ngIf="!forms[i]; else latField">{{location.lat}}</span>
+            <ng-template #latField>
+              <app-form-field [form]="forms[i]" fieldName="lat"></app-form-field>
+            </ng-template>
+          </td>
+          <td>
+            <span *ngIf="!forms[i]; else lngField">{{location.lng}}</span>
+            <ng-template #lngField>
+              <app-form-field [form]="forms[i]" fieldName="lng"></app-form-field>
+            </ng-template>
+          </td>
+          <td>
+            <button *ngIf="!forms[i]; else editModeActions" class="action-btn edit-btn" (click)="editLocation(location, i)">
+              <i class="fas fa-pen"></i>
+            </button>
+            <ng-template #editModeActions>
+              <button class="action-btn cancel-btn" (click)="cancelEditing(i)">
+                <i class="fas fa-ban"></i>
+              </button>
+              <button class="action-btn save-btn" (click)="saveEditing(i, location)">
+                <i class="fas fa-save"></i>
+              </button>
+            </ng-template>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
   <div class="pagination-wrapper">
     <ngb-pagination *ngIf="(locations$ | async).length > locationsPerPage"
       class="d-flex justify-content-end"
@@ -49,6 +76,7 @@
       [(page)]="currentPage"
       [pageSize]="locationsPerPage"
       [maxSize]="5"
+      [disabled]="editMode"
       size="sm"
       (pageChange)="onCurrentPageChange()"></ngb-pagination>
   </div>

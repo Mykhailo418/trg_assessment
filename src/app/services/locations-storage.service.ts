@@ -7,6 +7,7 @@ import { Marker } from '../models/marker';
   providedIn: 'root'
 })
 export class LocationsStorageService {
+  private locations: Marker[] = [];
   private locationsSubject = new BehaviorSubject([]);
 
   constructor() { }
@@ -16,6 +17,18 @@ export class LocationsStorageService {
   }
 
   setLocations(locations: Marker[]): void {
+    this.locations = locations;
     this.locationsSubject.next(locations);
+  }
+
+  updateLocation(location: Marker): void {
+    console.log('save', location);
+    const locations = this.locations.map((loc: Marker, i: number) => {
+      if (loc.id === location.id) {
+        return location;
+      }
+      return loc;
+    });
+    this.setLocations(locations);
   }
 }
