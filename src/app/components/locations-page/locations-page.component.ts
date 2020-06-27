@@ -2,11 +2,13 @@ import { Component, OnInit, ViewChild, ElementRef, AfterViewInit, AfterViewCheck
 import { Observable, combineLatest, Subject, BehaviorSubject } from 'rxjs';
 import { map, tap } from 'rxjs/operators';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 import { LocationsStorageService } from '../../services/locations-storage.service';
 import { Marker } from '../../models/marker';
 import { ORDER } from '../../constants/order';
 import { Sorting } from '../../models/sorting';
+import { CreateLocationModalComponent } from './create-location-modal/create-location-modal.component';
 
 @Component({
   selector: 'app-locations-page',
@@ -43,9 +45,10 @@ export class LocationsPageComponent implements OnInit, AfterViewInit {
   editMode = false;
   forms = {};
 
-  private latLngPattern = /^\d{2}\.\d{5}$/;
+  private latLngPattern = /^\d{2}\.\d{5,7}$/;
 
-  constructor(private locationsStorageService: LocationsStorageService) { }
+  constructor(private locationsStorageService: LocationsStorageService,
+              private modalService: NgbModal) { }
 
   ngOnInit(): void {
     this.locations$ = this.locationsStorageService.observeLocations()
@@ -144,11 +147,31 @@ export class LocationsPageComponent implements OnInit, AfterViewInit {
     if (this.forms[rowIndex].invalid) return;
     this.locationsStorageService.updateLocation({
       id: location.id,
-      ...this.forms[rowIndex].value
+      name: this.forms[rowIndex].value.name,
+      lat: +this.forms[rowIndex].value.lat,
+      lng: +this.forms[rowIndex].value.lng,
     });
     delete this.forms[rowIndex];
     this.editMode = !!Object.keys(this.forms).length;
     console.log(this.forms);
+  }
+
+  addNewLocation(): void {
+    const modalRef = this.modalService.open(CreateLocationModalComponent, {size: 'md'})
+
+    modalRef.componentInstance.locationId = this.locationsStorageService.getLocationsLength();
+    modalRef.componentInstance.form = this.createForm({
+      id: null,
+      name: null,
+      lat: null,
+      lng: null
+    });
+
+    console.log(modalRef.componentInstance.form);
+    modalRef.result
+      .then((location: Marker) => {
+        this.locationsStorageService.saveNewLocation(location);
+      }, () => {});
   }
 
   private createForm(location: Marker): FormGroup {

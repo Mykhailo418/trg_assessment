@@ -31,4 +31,12 @@ export class LocationsStorageService {
     });
     this.setLocations(locations);
   }
+
+  saveNewLocation(location: Marker): void {
+    this.setLocations([...this.locations, location]);
+  }
+
+  getLocationsLength(): number {
+    return this.locations.length;
+  }
 }

@@ -1,0 +1,34 @@
+@import '../../../styles/variables';
+
+.modal-header {
+  background: $modal-head-bg;
+  .modal-title {
+    font-size: 1.3em;
+    color: white;
+  }
+  .close {
+    color: white;
+    outline: 0;
+  }
+}
+
+.modal-body {
+  .col-12 {
+    margin-bottom: 1rem;
+  }
+  ::ng-deep {
+    .form {
+      .form-group {
+        label {
+          margin-bottom: 0;
+        }
+        .form.control {
+
+        }
+        .errors {
+          font-size: 0.8em;
+        }
+      }
+    }
+  }
+}

@@ -10,6 +10,7 @@ import { FormGroup, FormControl } from '@angular/forms';
 export class FormFieldComponent implements OnInit {
   @Input() form: FormGroup;
   @Input() fieldName: string;
+  @Input() label: string;
 
   private defaultErrorText = 'Error';
   private errorDescriptions = {

@@ -14,6 +14,7 @@ import { MapPageComponent } from './components/map-page/map-page.component';
 import { HeaderComponent } from './components/header/header.component';
 import { MarkerInfoComponent } from './components/map-page/marker-info/marker-info.component';
 import { LocationsPageComponent } from './components/locations-page/locations-page.component';
+import { CreateLocationModalComponent } from './components/locations-page/create-location-modal/create-location-modal.component';
 
 @NgModule({
   declarations: [
@@ -21,7 +22,8 @@ import { LocationsPageComponent } from './components/locations-page/locations-pa
     MapPageComponent,
     HeaderComponent,
     MarkerInfoComponent,
-    LocationsPageComponent
+    LocationsPageComponent,
+    CreateLocationModalComponent
   ],
   imports: [
     BrowserModule,
