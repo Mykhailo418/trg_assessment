@@ -45,7 +45,7 @@ export class LocationsPageComponent implements OnInit, AfterViewInit {
   editMode = false;
   forms = {};
 
-  private latLngPattern = /^\d{2}\.\d{5,7}$/;
+  private latLngPattern = /^\d{2}\.\d{5,}$/;
 
   constructor(private locationsStorageService: LocationsStorageService,
               private modalService: NgbModal) { }
@@ -140,7 +140,6 @@ export class LocationsPageComponent implements OnInit, AfterViewInit {
   cancelEditing(rowIndex: number): void {
     delete this.forms[rowIndex];
     this.editMode = !!Object.keys(this.forms).length;
-    console.log(this.editMode, Object.keys(this.forms).length, this.forms);
   }
 
   saveEditing(rowIndex: number, location: Marker): void {
@@ -153,7 +152,6 @@ export class LocationsPageComponent implements OnInit, AfterViewInit {
     });
     delete this.forms[rowIndex];
     this.editMode = !!Object.keys(this.forms).length;
-    console.log(this.forms);
   }
 
   addNewLocation(): void {
@@ -167,10 +165,13 @@ export class LocationsPageComponent implements OnInit, AfterViewInit {
       lng: null
     });
 
-    console.log(modalRef.componentInstance.form);
     modalRef.result
       .then((location: Marker) => {
+        this.sortColumns('');
         this.locationsStorageService.saveNewLocation(location);
+        const lastPage = Math.ceil((this.locationsStorageService.getLocationsLength() + 1)/this.locationsPerPage);
+        this.currentPage = lastPage;
+        this.currentPageChanged.next(this.currentPage);
       }, () => {});
   }
 

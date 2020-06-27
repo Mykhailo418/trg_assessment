@@ -10,6 +10,7 @@
       [longitude]="marker.lng"
       [openInfoWindow]="false"
       [markerClickable]="showInfoWindow"
+      [iconUrl]="markerUrl"
       (markerClick)="onMarkerClick($event, marker)">
         <agm-info-window
           [isOpen]="showInfoWindow && selectedMarker === marker"

@@ -6,14 +6,20 @@
 </div>
 <div class="modal-body">
   <div class="row">
-    <div class="col-12">
+    <div class="col-12 field-wrapper">
       <app-form-field [form]="form" fieldName="name" label="Name:"></app-form-field>
     </div>
-    <div class="col-6">
+    <div class="col-6 field-wrapper">
       <app-form-field [form]="form" fieldName="lat" label="Lat:"></app-form-field>
     </div>
-    <div class="col-6">
+    <div class="col-6 field-wrapper">
       <app-form-field [form]="form" fieldName="lng" label="Lng:"></app-form-field>
+    </div>
+    <div class="col-12 map-wrapper">
+      <app-map
+        [markers]="markers"
+        [showInfoWindow]="false"
+        (onMapClick)="onMapClick($event)"></app-map>
     </div>
   </div>
 </div>

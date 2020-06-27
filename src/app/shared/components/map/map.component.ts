@@ -1,5 +1,5 @@
 import { Component, OnInit, Input, Output, EventEmitter, SimpleChanges, OnChanges, ChangeDetectionStrategy } from '@angular/core';
-import { MouseEvent, AgmMarker, AgmInfoWindow } from '@agm/core';
+import { MouseEvent as MouseMapEvent, AgmMarker, AgmInfoWindow } from '@agm/core';
 
 import { Marker } from '../../../models/marker';
 
@@ -12,14 +12,15 @@ import { Marker } from '../../../models/marker';
 export class MapComponent implements OnInit, OnChanges {
   @Input() markers: Marker[] = [];
   @Input() showInfoWindow: boolean = true;
-  @Output('onMapClick') onMapClickEvent = new EventEmitter<MouseEvent>();
+  @Output('onMapClick') onMapClickEvent = new EventEmitter<MouseMapEvent>();
   @Output('onMarkerClick') onMarkerClickEvent = new EventEmitter<Marker>();
   @Output('onInfoClose') onInfoCloseEvent = new EventEmitter<null>();
 
-  lat: number;
-  lng: number;
+  lat = 35.01200350271661;
+  lng = 33.24187398287853;
   zoom = 8;
   mapTypeId = 'roadmap';
+  markerUrl = 'assets/marker.svg';
 
   selectedMarker: Marker;
   selectedInfoWindow: AgmInfoWindow;
@@ -36,7 +37,7 @@ export class MapComponent implements OnInit, OnChanges {
   ngOnInit(): void {
   }
 
-  onMapClick(event: MouseEvent): void {
+  onMapClick(event: MouseMapEvent): void {
     this.closeInfo();
     this.onMapClickEvent.emit(event);
   }

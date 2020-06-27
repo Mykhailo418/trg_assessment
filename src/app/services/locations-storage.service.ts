@@ -22,7 +22,6 @@ export class LocationsStorageService {
   }
 
   updateLocation(location: Marker): void {
-    console.log('save', location);
     const locations = this.locations.map((loc: Marker, i: number) => {
       if (loc.id === location.id) {
         return location;

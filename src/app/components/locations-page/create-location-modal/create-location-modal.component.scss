@@ -13,8 +13,11 @@
 }
 
 .modal-body {
-  .col-12 {
+  .field-wrapper {
     margin-bottom: 1rem;
+  }
+  .map-wrapper {
+    height: 200px;
   }
   ::ng-deep {
     .form {

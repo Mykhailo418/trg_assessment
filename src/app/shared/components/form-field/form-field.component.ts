@@ -5,7 +5,7 @@ import { FormGroup, FormControl } from '@angular/forms';
   selector: 'app-form-field',
   templateUrl: './form-field.component.html',
   styleUrls: ['./form-field.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+
 })
 export class FormFieldComponent implements OnInit {
   @Input() form: FormGroup;
